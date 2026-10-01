@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NUMPA — Saved Pipelines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080d17;--surface:#111b30;--surface-2:#16213a;--line:#22304c;--text:#e9eef7;--muted:#8fa0bd;--blue:#4f8cff;--cyan:#31d5c8;
+padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;}
+*{box-sizing:inherit;}html,body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;}
+h1,h2,h3{font-family:'Space Grotesk';letter-spacing:-0.01em;margin:0;}.mono{font-family:'IBM Plex Mono',monospace;}a{color:inherit;text-decoration:none;}
+.shell{display:flex;min-height:100vh;}
+.sidebar{width:230px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.brand{display:flex;align-items:center;gap:9px;font-family:'Space Grotesk';font-weight:700;font-size:17px;padding:6px 10px 18px;}
+.brand .dot{width:9px;height:9px;border-radius:3px;background:linear-gradient(135deg,var(--blue),var(--cyan));}
+.navsec{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.06em;padding:14px 10px 6px;}
+.navlink{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font-size:14px;color:var(--muted);}
+.navlink:hover{background:var(--surface-2);color:var(--text);}
+.navlink.active{background:rgba(79,140,255,0.14);color:var(--text);border:1px solid rgba(79,140,255,0.3);}
+.userbox{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px;border-top:1px solid var(--line);}
+.avatar{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;color:#04101c;}
+.uname{font-size:13.5px;}.uplan{font-size:11.5px;color:var(--muted);}
+.main{flex:1;min-width:0;padding:26px 34px 60px;}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:14px;}
+.topbar h1{font-size:22px;}.topbar p{color:var(--muted);font-size:13.5px;margin:4px 0 0;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;border:1px solid transparent;}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04101c;}
+.list{display:flex;flex-direction:column;gap:14px;}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.picon{width:40px;height:40px;border-radius:10px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.pinfo{flex:1;min-width:200px;}
+.pname{font-size:15px;font-weight:500;}
+.pmeta{font-size:12.5px;color:var(--muted);margin-top:2px;}
+.psteps{display:flex;gap:6px;flex-wrap:wrap;}
+.schip{font-size:11.5px;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:3px 9px;color:var(--muted);}
+.schip.warn{color:#e0a840;border-color:rgba(224,168,64,0.35);}
+.pactions{display:flex;gap:10px;font-size:12.5px;color:var(--blue);flex-shrink:0;}
+</style></head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><span class="dot"></span>NUMPA</div>
+    <a class="navlink" href="#">▤ Dashboard</a><a class="navlink" href="#">⟲ Data Cleaning</a><a class="navlink" href="#">◎ ML Readiness</a>
+    <a class="navlink" href="#">▦ Datasets</a><a class="navlink" href="#">▧ Reports</a>
+    <div class="navsec">Configure</div>
+    <a class="navlink" href="#">⚙ Custom Models</a><a class="navlink active" href="#">❖ Saved Pipelines</a>
+    <div class="navsec">Organization</div>
+    <a class="navlink" href="#">◒ Team Workspace</a><a class="navlink" href="#">⇄ Integrations</a><a class="navlink" href="#">⌘ API Access</a>
+    <a class="navlink" href="#">◫ White Label</a><a class="navlink" href="#">◍ Settings</a>
+    <div class="userbox"><div class="avatar">D</div><div><div class="uname">Deep</div><div class="uplan">Starter plan</div></div></div>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div><h1>Saved Pipelines</h1><p>Reusable cleaning sequences you can apply to any compatible dataset</p></div>
+      <a class="btn btn-primary" href="#">Build new pipeline</a>
+    </div>
+    <div class="list">
+      <div class="pcard">
+        <div class="picon">⟲</div>
+        <div class="pinfo"><div class="pname">Standard churn prep</div><div class="pmeta">Used 4 times · last run 2h ago · v3</div></div>
+        <div class="psteps"><span class="schip">impute (median)</span><span class="schip">dedupe</span><span class="schip warn">encode</span><span class="schip">scale</span></div>
+        <div class="pactions"><a href="#">Run</a><a href="#">Duplicate</a><a href="#">Edit</a></div>
+      </div>
+      <div class="pcard">
+        <div class="picon">⟲</div>
+        <div class="pinfo"><div class="pname">Sales dedupe &amp; outliers</div><div class="pmeta">Used 1 time · last run 3 days ago · v1</div></div>
+        <div class="psteps"><span class="schip">dedupe</span><span class="schip">outliers (IQR)</span></div>
+        <div class="pactions"><a href="#">Run</a><a href="#">Duplicate</a><a href="#">Edit</a></div>
+      </div>
+      <div class="pcard">
+        <div class="picon">⟲</div>
+        <div class="pinfo"><div class="pname">Text-heavy intake</div><div class="pmeta">Used 2 times · last run 1 week ago · v2</div></div>
+        <div class="psteps"><span class="schip">clean text</span><span class="schip">dtypes</span><span class="schip">rename</span></div>
+        <div class="pactions"><a href="#">Run</a><a href="#">Duplicate</a><a href="#">Edit</a></div>
+      </div>
+      <div class="pcard">
+        <div class="picon">⟲</div>
+        <div class="pinfo"><div class="pname">Time-series gap fill</div><div class="pmeta">Used 1 time · last run 2 weeks ago · v1</div></div>
+        <div class="psteps"><span class="schip">impute (forward-fill)</span><span class="schip">round &amp; clip</span></div>
+        <div class="pactions"><a href="#">Run</a><a href="#">Duplicate</a><a href="#">Edit</a></div>
+      </div>
+    </div>
+  </main>
+</div>
+</body></html>

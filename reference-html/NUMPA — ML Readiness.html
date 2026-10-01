@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NUMPA — ML Readiness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080d17;--surface:#111b30;--surface-2:#16213a;--line:#22304c;
+  --text:#e9eef7;--muted:#8fa0bd;--blue:#4f8cff;--cyan:#31d5c8;--amber:#e0a840;--red:#e07a5f;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;
+}
+*{box-sizing:inherit;}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;}
+h1,h2,h3{font-family:'Space Grotesk';letter-spacing:-0.01em;margin:0;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+a{color:inherit;text-decoration:none;}
+
+.shell{display:flex;min-height:100vh;}
+.sidebar{width:230px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.brand{display:flex;align-items:center;gap:9px;font-family:'Space Grotesk';font-weight:700;font-size:17px;padding:6px 10px 18px;}
+.brand .dot{width:9px;height:9px;border-radius:3px;background:linear-gradient(135deg,var(--blue),var(--cyan));}
+.navsec{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.06em;padding:14px 10px 6px;}
+.navlink{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font-size:14px;color:var(--muted);}
+.navlink:hover{background:var(--surface-2);color:var(--text);}
+.navlink.active{background:rgba(79,140,255,0.14);color:var(--text);border:1px solid rgba(79,140,255,0.3);}
+.userbox{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px;border-top:1px solid var(--line);}
+.avatar{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;color:#04101c;}
+.uname{font-size:13.5px;}.uplan{font-size:11.5px;color:var(--muted);}
+
+.main{flex:1;min-width:0;padding:26px 34px 60px;}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:14px;}
+.topbar h1{font-size:22px;}
+.topbar p{color:var(--muted);font-size:13.5px;margin:4px 0 0;}
+.badges{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.badge{font-size:11.5px;padding:3px 9px;border-radius:100px;background:var(--surface-2);color:var(--muted);border:1px solid var(--line);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;border:1px solid transparent;}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04101c;}
+.btn-ghost{border-color:var(--line);color:var(--text);}
+
+.top-grid{display:grid;grid-template-columns:280px 1fr;gap:20px;margin-bottom:22px;}
+@media(max-width:880px){.top-grid{grid-template-columns:1fr;}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;}
+
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;}
+.gauge{width:170px;height:170px;position:relative;}
+.gauge svg{transform:rotate(-90deg);}
+.gauge-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.gauge-num .n{font-family:'Space Grotesk';font-size:38px;font-weight:700;}
+.gauge-num .l{font-size:11.5px;color:var(--muted);}
+.gauge-cap{margin-top:14px;font-size:13px;color:var(--muted);}
+
+.dim-list{display:flex;flex-direction:column;gap:14px;}
+.dim-row{display:grid;grid-template-columns:150px 1fr 40px;align-items:center;gap:12px;font-size:13.5px;}
+.dim-track{height:8px;background:var(--surface-2);border-radius:5px;overflow:hidden;}
+.dim-track > span{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--blue),var(--cyan));}
+.dim-val{text-align:right;color:var(--muted);font-family:'IBM Plex Mono';font-size:12.5px;}
+
+.check-panel{margin-bottom:20px;}
+.check-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.tab{font-size:12.5px;padding:6px 12px;border-radius:100px;border:1px solid var(--line);color:var(--muted);}
+.tab.on{background:rgba(79,140,255,0.16);color:var(--text);border-color:rgba(79,140,255,0.35);}
+
+.check-row{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);}
+.check-row:last-child{border-bottom:none;}
+.cstat{width:22px;height:22px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px;}
+.cstat.pass{background:rgba(49,213,200,0.16);color:var(--cyan);}
+.cstat.warn{background:rgba(224,168,64,0.16);color:var(--amber);}
+.cstat.crit{background:rgba(224,122,95,0.18);color:var(--red);}
+.cbody h4{font-size:14px;font-weight:500;margin:0 0 3px;}
+.cbody p{font-size:13px;color:var(--muted);margin:0;}
+
+.rec-list{display:flex;flex-direction:column;gap:10px;}
+.rec{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13.5px;}
+.rec-link{font-size:12.5px;color:var(--blue);flex-shrink:0;}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><span class="dot"></span>NUMPA</div>
+    <a class="navlink" href="#">▤ Dashboard</a>
+    <a class="navlink" href="#">⟲ Data Cleaning</a>
+    <a class="navlink active" href="#">◎ ML Readiness</a>
+    <a class="navlink" href="#">▦ Datasets</a>
+    <a class="navlink" href="#">▧ Reports</a>
+    <div class="navsec">Configure</div>
+    <a class="navlink" href="#">⚙ Custom Models</a>
+    <a class="navlink" href="#">❖ Saved Pipelines</a>
+    <div class="navsec">Organization</div>
+    <a class="navlink" href="#">◒ Team Workspace</a>
+    <a class="navlink" href="#">⇄ Integrations</a>
+    <a class="navlink" href="#">⌘ API Access</a>
+    <a class="navlink" href="#">◫ White Label</a>
+    <a class="navlink" href="#">◍ Settings</a>
+    <div class="userbox"><div class="avatar">D</div><div><div class="uname">Deep</div><div class="uplan">Starter plan</div></div></div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1>customer_churn.csv</h1>
+        <p>Initial readiness assessment · target column: <span class="mono">churned</span></p>
+        <div class="badges">
+          <span class="badge">Classification</span>
+          <span class="badge">Algorithm: gradient boosted trees</span>
+          <span class="badge">Validation: stratified 80/20</span>
+        </div>
+      </div>
+      <a class="btn btn-primary" href="#">Send to cleaning studio</a>
+    </div>
+
+    <div class="top-grid">
+      <div class="panel gauge-wrap">
+        <div class="gauge">
+          <svg width="170" height="170" viewBox="0 0 170 170">
+            <circle cx="85" cy="85" r="72" fill="none" stroke="#16213a" stroke-width="14"/>
+            <circle cx="85" cy="85" r="72" fill="none" stroke="url(#g)" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="452.4" stroke-dashoffset="98"/>
+            <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#4f8cff"/><stop offset="100%" stop-color="#31d5c8"/>
+            </linearGradient></defs>
+          </svg>
+          <div class="gauge-num"><div class="n">78</div><div class="l">/ 100</div></div>
+        </div>
+        <div class="gauge-cap">Ready with reservations — 2 warnings before training</div>
+      </div>
+
+      <div class="panel">
+        <h3 style="font-size:15.5px;margin-bottom:16px;">Dimension breakdown</h3>
+        <div class="dim-list">
+          <div class="dim-row"><span>Completeness</span><div class="dim-track"><span style="width:88%;"></span></div><span class="dim-val">88</span></div>
+          <div class="dim-row"><span>Validity &amp; consistency</span><div class="dim-track"><span style="width:91%;"></span></div><span class="dim-val">91</span></div>
+          <div class="dim-row"><span>Record integrity</span><div class="dim-track"><span style="width:76%;"></span></div><span class="dim-val">76</span></div>
+          <div class="dim-row"><span>Feature suitability</span><div class="dim-track"><span style="width:82%;"></span></div><span class="dim-val">82</span></div>
+          <div class="dim-row"><span>Target suitability</span><div class="dim-track"><span style="width:94%;"></span></div><span class="dim-val">94</span></div>
+          <div class="dim-row"><span>Data sufficiency</span><div class="dim-track"><span style="width:70%;"></span></div><span class="dim-val">70</span></div>
+          <div class="dim-row"><span>Leakage &amp; validation</span><div class="dim-track"><span style="width:58%;"></span></div><span class="dim-val">58</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel check-panel">
+      <div class="check-tabs">
+        <span class="tab on">All checks (24)</span>
+        <span class="tab">Critical (1)</span>
+        <span class="tab">Warnings (3)</span>
+        <span class="tab">Not applicable (2)</span>
+      </div>
+      <div class="check-row">
+        <div class="cstat crit">!</div>
+        <div class="cbody"><h4>Suspected temporal leakage in "last_contact_date"</h4><p>This field can be populated after the churn outcome is known. Review whether it's available at prediction time.</p></div>
+      </div>
+      <div class="check-row">
+        <div class="cstat warn">△</div>
+        <div class="cbody"><h4>Class imbalance detected</h4><p>Minority class ("churned = 1") makes up 12% of records. Consider stratified sampling or class weighting.</p></div>
+      </div>
+      <div class="check-row">
+        <div class="cstat warn">△</div>
+        <div class="cbody"><h4>18 duplicate records found</h4><p>Exact duplicates across all columns. Safe to remove before training.</p></div>
+      </div>
+      <div class="check-row">
+        <div class="cstat pass">✓</div>
+        <div class="cbody"><h4>Target column is valid and complete</h4><p>"churned" has no missing values and both classes are represented.</p></div>
+      </div>
+      <div class="check-row">
+        <div class="cstat pass">✓</div>
+        <div class="cbody"><h4>No group leakage detected</h4><p>No repeated customer identifiers found across rows.</p></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="font-size:15.5px;margin-bottom:16px;">Recommended next steps</h3>
+      <div class="rec-list">
+        <div class="rec"><span>Review "last_contact_date" for temporal leakage before proceeding</span><a class="rec-link" href="#">Investigate →</a></div>
+        <div class="rec"><span>Remove 18 duplicate records</span><a class="rec-link" href="#">Send to cleaning →</a></div>
+        <div class="rec"><span>Apply class weighting or stratified sampling for imbalance</span><a class="rec-link" href="#">Configure →</a></div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

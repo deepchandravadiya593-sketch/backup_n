@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NUMPA — Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080d17;--surface:#111b30;--surface-2:#16213a;--line:#22304c;
+  --text:#e9eef7;--muted:#8fa0bd;--blue:#4f8cff;--cyan:#31d5c8;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;
+}
+*{box-sizing:inherit;}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;}
+h1,h2,h3{font-family:'Space Grotesk';letter-spacing:-0.01em;margin:0;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+a{color:inherit;text-decoration:none;}
+code{font-family:'IBM Plex Mono';background:var(--surface-2);padding:1px 6px;border-radius:5px;font-size:12.5px;color:var(--cyan);}
+
+nav.top{position:sticky;top:0;z-index:20;padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:14px;background:rgba(8,13,23,0.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+.navrow{max-width:1240px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.logo{display:flex;align-items:center;gap:9px;font-family:'Space Grotesk';font-weight:700;font-size:17px;}
+.logo .dot{width:9px;height:9px;border-radius:3px;background:linear-gradient(135deg,var(--blue),var(--cyan));}
+.navlinks{display:flex;gap:26px;font-size:14px;color:var(--muted);}
+.navlinks a.on{color:var(--text);}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04101c;padding:8px 14px;border-radius:8px;font-size:13.5px;font-weight:600;}
+@media(max-width:760px){.navlinks{display:none;}}
+
+.shell{max-width:1240px;margin:0 auto;padding:0 28px;display:grid;grid-template-columns:220px 1fr 200px;gap:36px;}
+@media(max-width:980px){.shell{grid-template-columns:1fr;}}
+
+.docnav{padding:30px 0;position:sticky;top:64px;align-self:start;}
+@media(max-width:980px){.docnav{position:static;padding-bottom:0;}}
+.docnav h4{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin:18px 0 8px;}
+.docnav h4:first-child{margin-top:0;}
+.dlink{display:block;padding:6px 0;font-size:13.5px;color:var(--muted);}
+.dlink.on{color:var(--cyan);font-weight:500;}
+.dlink:hover{color:var(--text);}
+
+.content{padding:36px 0 80px;max-width:680px;}
+.content h1{font-size:28px;margin-bottom:10px;}
+.content .lead{color:var(--muted);font-size:15.5px;margin-bottom:32px;}
+.content h2{font-size:19px;margin:36px 0 12px;}
+.content p{font-size:14.5px;color:#c6d0e2;margin:0 0 14px;}
+.content ul{margin:0 0 16px;padding-left:20px;color:#c6d0e2;font-size:14.5px;}
+.content li{margin-bottom:6px;}
+
+.formula-box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:16px 0 20px;font-family:'IBM Plex Mono';font-size:13.5px;color:var(--cyan);overflow-x:auto;}
+
+.status-table{width:100%;border-collapse:collapse;margin:16px 0 24px;font-size:13.5px;}
+.status-table th{text-align:left;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:0.04em;padding:8px 10px;border-bottom:1px solid var(--line);}
+.status-table td{padding:10px;border-bottom:1px solid var(--line);color:#c6d0e2;}
+
+.toc{padding:36px 0;position:sticky;top:64px;align-self:start;font-size:13px;}
+@media(max-width:980px){.toc{display:none;}}
+.toc h4{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin:0 0 10px;}
+.toc a{display:block;color:var(--muted);padding:4px 0;}
+.toc a:hover{color:var(--text);}
+</style>
+</head>
+<body>
+<nav class="top">
+  <div class="navrow">
+    <div class="logo"><span class="dot"></span>NUMPA</div>
+    <div class="navlinks"><a href="#">Features</a><a href="#">Pricing</a><a href="#" class="on">Documentation</a></div>
+    <a class="btn-primary" href="#">Get started</a>
+  </div>
+</nav>
+
+<div class="shell">
+  <aside class="docnav">
+    <h4>Get started</h4>
+    <a class="dlink" href="#">Introduction</a>
+    <a class="dlink" href="#">Uploading a dataset</a>
+    <a class="dlink" href="#">Choosing a task</a>
+    <h4>Methodology</h4>
+    <a class="dlink on" href="#">Readiness scoring</a>
+    <a class="dlink" href="#">Leakage detection</a>
+    <a class="dlink" href="#">Cleaning operations</a>
+    <h4>Reference</h4>
+    <a class="dlink" href="#">REST API</a>
+    <a class="dlink" href="#">Zapier</a>
+    <a class="dlink" href="#">White-label widget</a>
+  </aside>
+
+  <main class="content">
+    <h1>Readiness scoring methodology</h1>
+    <p class="lead">How NUMPA turns raw checks into a single, explainable readiness score — and why that score should never be treated as a guarantee.</p>
+
+    <h2>How the score is calculated</h2>
+    <p>Each applicable dimension gets a normalized quality value between 0 and 1, weighted by its configured importance, then combined into a single 0–100 score:</p>
+    <div class="formula-box">score = 100 × ( Σ w<sub>i</sub> · q<sub>i</sub> ) / ( Σ w<sub>i</sub> ) &nbsp;&nbsp;for i in applicable dimensions</div>
+    <p>Only dimensions that were successfully evaluated contribute to the score. A dimension NUMPA couldn't evaluate is excluded — it does not default to a neutral 0.5, since that would silently hide missing information.</p>
+
+    <h2>Default scoring dimensions</h2>
+    <table class="status-table">
+      <tr><th>Dimension</th><th>Default weight</th><th>What it measures</th></tr>
+      <tr><td>Completeness</td><td class="mono">20%</td><td>Missing values and missing required information</td></tr>
+      <tr><td>Validity &amp; consistency</td><td class="mono">15%</td><td>Invalid values, type mismatches, format issues</td></tr>
+      <tr><td>Record integrity</td><td class="mono">10%</td><td>Duplicate and structurally broken records</td></tr>
+      <tr><td>Feature suitability</td><td class="mono">15%</td><td>Relevance and usability of input features</td></tr>
+      <tr><td>Target suitability</td><td class="mono">15%</td><td>Target availability, validity, task compatibility</td></tr>
+      <tr><td>Data sufficiency</td><td class="mono">10%</td><td>Whether available data is adequate for the task</td></tr>
+      <tr><td>Leakage &amp; validation</td><td class="mono">15%</td><td>Leakage risk and validation strategy fit</td></tr>
+    </table>
+    <p>These weights are configurable per assessment. In the <a href="#" style="color:var(--blue);">Custom Model Studio</a>, you can define your own weighting for a specific task or company standard.</p>
+
+    <h2>Finding categories</h2>
+    <p>Every check NUMPA runs resolves to one of four states, so you always know the difference between a real problem and a limitation of the assessment itself:</p>
+    <table class="status-table">
+      <tr><th>Status</th><th>Meaning</th></tr>
+      <tr><td>Confirmed issue</td><td>A problem supported directly by the data or configuration</td></tr>
+      <tr><td>Suspected issue</td><td>Evidence suggests a risk that needs human review</td></tr>
+      <tr><td>Unknown</td><td>Not enough information was available to evaluate the check</td></tr>
+      <tr><td>Not applicable</td><td>The check doesn't apply to this task or dataset</td></tr>
+    </table>
+
+    <h2>What this score is not</h2>
+    <ul>
+      <li>It does not guarantee predictive accuracy of any model trained on the dataset.</li>
+      <li>It does not automatically make a dataset ML-ready — cleaning decisions remain yours.</li>
+      <li>It does not replace domain expertise, especially for semantic leakage that no automated check can see.</li>
+    </ul>
+    <p>Critical risks — like confirmed target leakage — always stay visible in the results, even when the overall score looks high. A high aggregate score is never allowed to bury a specific, serious problem.</p>
+  </main>
+
+  <aside class="toc">
+    <h4>On this page</h4>
+    <a href="#">How the score is calculated</a>
+    <a href="#">Default dimensions</a>
+    <a href="#">Finding categories</a>
+    <a href="#">What this score is not</a>
+  </aside>
+</div>
+</body>
+</html>

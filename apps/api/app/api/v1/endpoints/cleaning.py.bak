@@ -1,0 +1,302 @@
+
+"""NUMPA v2 - Cleaning Studio API endpoints.
+
+Preview cleaning without changing the stored dataset, or execute
+an approved pipeline and save its result as a separate dataset.
+"""
+
+from fastapi import APIRouter, HTTPException
+from pydantic import ValidationError
+
+from app.api.v1.endpoints.datasets import get_dataset_dataframe
+from app.schemas.cleaning import (
+    CleaningPreviewRequest,
+    CleaningExecuteRequest,
+    CleaningResultResponse,
+)
+from app.services.cleaning.engine import (
+    CleaningRequest,
+    preview_cleaning,
+    execute_cleaning,
+)
+from app.services.cleaning.pipeline import PipelineExecutionError
+from app.services.storage.datasets import (
+    save_dataset,
+    delete_dataset as storage_delete_dataset,
+)
+
+
+# All routes in this module begin with /cleaning.
+router = APIRouter(
+    prefix="/cleaning",
+    tags=["Cleaning Studio"],
+)
+
+
+
+def _build_engine_request(
+    request: CleaningPreviewRequest | CleaningExecuteRequest,
+) -> CleaningRequest:
+    """Convert an API request into the cleaning engine's format."""
+
+    return CleaningRequest(
+        pipeline=request.pipeline,
+        preview_rows=request.preview_rows,
+        fitted_artifacts=request.fitted_artifacts,
+    )
+
+
+def _handle_cleaning_error(exc: Exception) -> None:
+    """Convert expected cleaning errors into HTTP responses."""
+
+    if isinstance(exc, PipelineExecutionError):
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "message": exc.message,
+                "step_id": exc.step_id,
+                "operation": exc.operation,
+            },
+        ) from exc
+
+    if isinstance(exc, (ValueError, TypeError, ValidationError)):
+        raise HTTPException(
+            status_code=422,
+            detail=str(exc),
+        ) from exc
+
+    # Unexpected errors should reach FastAPI's error handler.
+    raise exc
+
+
+@router.post(
+    "/preview",
+    response_model=CleaningResultResponse,
+)
+def preview_dataset_cleaning(
+    request: CleaningPreviewRequest,
+) -> CleaningResultResponse:
+    """Preview a cleaning pipeline without saving any changes."""
+
+    # Retrieve a copy; the stored original cannot be modified.
+    dataframe = get_dataset_dataframe(request.dataset_id)
+
+    engine_request = _build_engine_request(request)
+
+    try:
+        # Preview mode does not write to shared storage.
+        result = preview_cleaning(
+            dataframe,
+            engine_request,
+        )
+
+        # Explicitly indicate that no cleaned dataset was saved.
+        result["cleaned_dataset_id"] = None
+
+        return CleaningResultResponse.model_validate(result)
+
+    except Exception as exc:
+        _handle_cleaning_error(exc)
+        raise
+
+
+@router.post(
+    "/execute",
+    response_model=CleaningResultResponse,
+)
+def execute_dataset_cleaning(
+    request: CleaningExecuteRequest,
+) -> CleaningResultResponse:
+    """Execute an approved pipeline and save the cleaned result.
+
+    The original dataset remains available under its original ID.
+    The new dataset references its parent for traceability.
+    """
+
+    # CleaningExecuteRequest requires confirmed=True.
+    # Check explicitly as an additional safety measure.
+    if not request.confirmed:
+        raise HTTPException(
+            status_code=422,
+            detail="Confirm the cleaning operation before execution.",
+        )
+
+    # The storage service returns an independent DataFrame copy.
+    dataframe = get_dataset_dataframe(request.dataset_id)
+
+    engine_request = _build_engine_request(request)
+
+    try:
+        # Run the configured pipeline on the dataset copy.
+        cleaned_dataframe, result = execute_cleaning(
+            dataframe,
+            engine_request,
+        )
+
+    except Exception as exc:
+        _handle_cleaning_error(exc)
+        raise
+
+    # Do not save partial output if a configured step failed.
+    if result.get("status") != "completed":
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                "The cleaning pipeline did not complete successfully. "
+                "The cleaned dataset was not saved."
+            ),
+        )
+
+    # Generate a recognizable name for the new dataset.
+    cleaned_name = (
+        f"cleaned_{request.dataset_id[:8]}_"
+        f"{result['execution_id'][:8]}.csv"
+    )
+
+    try:
+        # Save a new dataset instead of overwriting the original.
+        metadata = save_dataset(
+            cleaned_dataframe,
+            name=cleaned_name,
+            kind="cleaned",
+            parent_dataset_id=request.dataset_id,
+        )
+
+    except KeyError as exc:
+        # The parent may have been deleted during execution.
+        raise HTTPException(
+            status_code=404,
+            detail="The original dataset is no longer available.",
+        ) from exc
+
+    except ValueError as exc:
+        message = str(exc)
+
+        if "storage is full" in message.lower():
+            raise HTTPException(
+                status_code=507,
+                detail=message,
+            ) from exc
+
+        raise HTTPException(
+            status_code=422,
+            detail=message,
+        ) from exc
+
+    # Include the new dataset ID in the existing response contract.
+    result["cleaned_dataset_id"] = metadata["dataset_id"]
+
+    try:
+        return CleaningResultResponse.model_validate(result)
+
+    except Exception:
+        # Avoid leaving an inaccessible cleaned dataset behind
+        # if response validation unexpectedly fails.
+        storage_delete_dataset(metadata["dataset_id"])
+        raise
+
+# ---------------------------------------------------------
+# File 49 - Cleaning Report PDF Download
+# ---------------------------------------------------------
+
+from io import BytesIO
+import re
+from typing import Any
+
+from fastapi import Body, HTTPException
+from fastapi.responses import StreamingResponse
+
+from app.services.reports.cleaning_pdf import (
+    generate_cleaning_report_pdf,
+)
+
+
+def _cleaning_pdf_filename(
+    execution_id: str,
+) -> str:
+    """Create a safe PDF filename from an execution ID."""
+
+    # Restrict the identifier to safe filename characters.
+    safe_id = re.sub(
+        r"[^A-Za-z0-9_-]+",
+        "_",
+        execution_id,
+    ).strip("_")
+
+    # Limit filename length and handle unusual identifiers.
+    safe_id = safe_id[:80] or "execution"
+
+    return f"numpa_cleaning_{safe_id}.pdf"
+
+
+@router.post(
+    "/report/pdf",
+    summary="Download cleaning execution report PDF",
+    description=(
+        "Generate a downloadable PDF from the supplied "
+        "cleaning execution result. The endpoint does not "
+        "rerun cleaning or independently verify the report."
+    ),
+)
+def download_cleaning_report_pdf(
+    execution_result: dict[str, Any] = Body(
+        ...,
+        description=(
+            "The execution result returned by "
+            "the cleaning execute endpoint."
+        ),
+    ),
+) -> StreamingResponse:
+    """Convert a cleaning execution result into a PDF."""
+
+    # Require an execution ID so that the downloaded
+    # report can be associated with a specific run.
+    execution_id = execution_result.get(
+        "execution_id"
+    )
+
+    if not isinstance(execution_id, str) or not execution_id.strip():
+        raise HTTPException(
+            status_code=422,
+            detail="A valid execution_id is required.",
+        )
+
+    # Generate the report using the service from File 48.
+    # This operation does not change the stored dataset.
+    try:
+        pdf_bytes = generate_cleaning_report_pdf(
+            execution_result
+        )
+
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=str(exc),
+        ) from exc
+
+    # Confirm that the PDF service returned a PDF.
+    if not pdf_bytes.startswith(b"%PDF-"):
+        raise HTTPException(
+            status_code=500,
+            detail="Cleaning PDF generation failed.",
+        )
+
+    filename = _cleaning_pdf_filename(
+        execution_id
+    )
+
+    # Return the report as a downloadable attachment.
+    return StreamingResponse(
+        BytesIO(pdf_bytes),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="{filename}"'
+            ),
+            "Content-Length": str(
+                len(pdf_bytes)
+            ),
+            "Cache-Control": "no-store",
+            "X-Content-Type-Options": "nosniff",
+        },
+    )

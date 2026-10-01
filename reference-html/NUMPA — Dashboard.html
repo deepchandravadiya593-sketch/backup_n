@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NUMPA — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080d17;--surface:#111b30;--surface-2:#16213a;--line:#22304c;
+  --text:#e9eef7;--muted:#8fa0bd;--blue:#4f8cff;--cyan:#31d5c8;--amber:#e0a840;--red:#e07a5f;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;
+}
+*{box-sizing:inherit;}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;}
+h1,h2,h3{font-family:'Space Grotesk';letter-spacing:-0.01em;margin:0;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+a{color:inherit;text-decoration:none;}
+
+.shell{display:flex;min-height:100vh;}
+.sidebar{
+  width:230px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--line);
+  padding:20px 14px;display:flex;flex-direction:column;gap:4px;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+.brand{display:flex;align-items:center;gap:9px;font-family:'Space Grotesk';font-weight:700;font-size:17px;padding:6px 10px 18px;}
+.brand .dot{width:9px;height:9px;border-radius:3px;background:linear-gradient(135deg,var(--blue),var(--cyan));}
+.navsec{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.06em;padding:14px 10px 6px;}
+.navlink{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font-size:14px;color:var(--muted);}
+.navlink svg{width:16px;height:16px;flex-shrink:0;}
+.navlink:hover{background:var(--surface-2);color:var(--text);}
+.navlink.active{background:rgba(79,140,255,0.14);color:var(--text);border:1px solid rgba(79,140,255,0.3);}
+.userbox{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px;border-top:1px solid var(--line);}
+.avatar{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;color:#04101c;}
+.uname{font-size:13.5px;}.uplan{font-size:11.5px;color:var(--muted);}
+
+.main{flex:1;min-width:0;padding:26px 34px 60px;}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+.topbar h1{font-size:23px;}
+.topbar p{color:var(--muted);font-size:14px;margin:4px 0 0;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid transparent;}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04101c;}
+.btn-ghost{border-color:var(--line);color:var(--text);}
+
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:30px;}
+@media(max-width:900px){.stat-grid{grid-template-columns:1fr 1fr;}}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;}
+.stat .lbl{font-size:12.5px;color:var(--muted);margin-bottom:8px;}
+.stat .val{font-family:'Space Grotesk';font-size:26px;font-weight:700;}
+.stat .delta{font-size:12px;margin-top:6px;}
+.delta.up{color:var(--cyan);}.delta.warn{color:var(--amber);}
+
+.panels{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;}
+@media(max-width:960px){.panels{grid-template-columns:1fr;}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.panel-head h3{font-size:15.5px;}
+.panel-head a{font-size:13px;color:var(--blue);}
+
+.drow{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);}
+.drow:last-child{border-bottom:none;}
+.dicon{width:34px;height:34px;border-radius:9px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.dinfo{flex:1;min-width:0;}
+.dname{font-size:14px;font-weight:500;}
+.dmeta{font-size:12px;color:var(--muted);margin-top:2px;}
+.dscore{font-family:'IBM Plex Mono';font-size:14px;padding:3px 9px;border-radius:7px;flex-shrink:0;}
+.dscore.high{background:rgba(49,213,200,0.14);color:var(--cyan);}
+.dscore.mid{background:rgba(224,168,64,0.14);color:var(--amber);}
+.dscore.low{background:rgba(224,122,95,0.14);color:var(--red);}
+
+.pipe-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13.5px;}
+.pipe-row:last-child{border-bottom:none;}
+.pipe-steps{display:flex;gap:5px;flex:1;flex-wrap:wrap;}
+.pipe-chip{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:11.5px;color:var(--muted);}
+.pipe-name{width:120px;flex-shrink:0;color:var(--text);}
+
+.empty-cta{border:1px dashed var(--line);border-radius:12px;padding:22px;text-align:center;color:var(--muted);font-size:13.5px;margin-top:6px;}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><span class="dot"></span>NUMPA</div>
+    <a class="navlink active" href="#"><span>▤</span> Dashboard</a>
+    <a class="navlink" href="#"><span>⟲</span> Data Cleaning</a>
+    <a class="navlink" href="#"><span>◎</span> ML Readiness</a>
+    <a class="navlink" href="#"><span>▦</span> Datasets</a>
+    <a class="navlink" href="#"><span>▧</span> Reports</a>
+    <div class="navsec">Configure</div>
+    <a class="navlink" href="#"><span>⚙</span> Custom Models</a>
+    <a class="navlink" href="#"><span>❖</span> Saved Pipelines</a>
+    <div class="navsec">Organization</div>
+    <a class="navlink" href="#"><span>◒</span> Team Workspace</a>
+    <a class="navlink" href="#"><span>⇄</span> Integrations</a>
+    <a class="navlink" href="#"><span>⌘</span> API Access</a>
+    <a class="navlink" href="#"><span>◫</span> White Label</a>
+    <a class="navlink" href="#"><span>◍</span> Settings</a>
+    <div class="userbox">
+      <div class="avatar">D</div>
+      <div><div class="uname">Deep</div><div class="uplan">Starter plan</div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div><h1>Welcome back, Deep</h1><p>3 datasets need attention · 1 assessment ready to review</p></div>
+      <a class="btn btn-primary" href="#">Upload dataset</a>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="lbl">Datasets</div><div class="val">7</div><div class="delta up">+2 this week</div></div>
+      <div class="stat"><div class="lbl">Avg. readiness</div><div class="val">78</div><div class="delta up">+11 after cleaning</div></div>
+      <div class="stat"><div class="lbl">Pipelines run</div><div class="val">12</div><div class="delta warn">2 flagged</div></div>
+      <div class="stat"><div class="lbl">Reports exported</div><div class="val">9</div><div class="delta up">PDF</div></div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-head"><h3>Recent datasets</h3><a href="#">View all</a></div>
+        <div class="drow">
+          <div class="dicon">📄</div>
+          <div class="dinfo"><div class="dname">customer_churn.csv</div><div class="dmeta">Classification · cleaned 2h ago</div></div>
+          <div class="dscore high">87</div>
+        </div>
+        <div class="drow">
+          <div class="dicon">📄</div>
+          <div class="dinfo"><div class="dname">sales_q3.xlsx</div><div class="dmeta">Regression · awaiting cleaning</div></div>
+          <div class="dscore mid">61</div>
+        </div>
+        <div class="drow">
+          <div class="dicon">📄</div>
+          <div class="dinfo"><div class="dname">store_traffic.csv</div><div class="dmeta">Time-series forecast · target missing</div></div>
+          <div class="dscore low">34</div>
+        </div>
+        <div class="drow">
+          <div class="dicon">📄</div>
+          <div class="dinfo"><div class="dname">segments_raw.csv</div><div class="dmeta">Clustering · initial assessment done</div></div>
+          <div class="dscore mid">58</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>Saved pipelines</h3><a href="#">Manage</a></div>
+        <div class="pipe-row"><span class="pipe-name">Standard churn prep</span><span class="pipe-steps"><span class="pipe-chip">impute</span><span class="pipe-chip">encode</span><span class="pipe-chip">scale</span></span></div>
+        <div class="pipe-row"><span class="pipe-name">Sales dedupe</span><span class="pipe-steps"><span class="pipe-chip">dedupe</span><span class="pipe-chip">outliers</span></span></div>
+        <div class="pipe-row"><span class="pipe-name">Text-heavy intake</span><span class="pipe-steps"><span class="pipe-chip">clean text</span><span class="pipe-chip">dtypes</span><span class="pipe-chip">rename</span></span></div>
+        <div class="empty-cta">Build a new pipeline from any dataset's cleaning studio, then save it here for reuse.</div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

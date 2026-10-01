@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NUMPA — Clean data, measured readiness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080d17;
+    --bg-2:#0d1526;
+    --surface:#111b30;
+    --surface-2:#16213a;
+    --line:#22304c;
+    --text:#e9eef7;
+    --muted:#8fa0bd;
+    --blue:#4f8cff;
+    --cyan:#31d5c8;
+    --amber:#e0a840;
+    --radius:14px;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-sizing:border-box;
+  }
+  *{box-sizing:inherit;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);}
+  body{
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.disp{font-family:'Space Grotesk',system-ui,sans-serif;letter-spacing:-0.01em;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+  img{max-width:100%;}
+
+  /* background wash */
+  body{
+    background:
+      radial-gradient(900px 500px at 85% -10%, rgba(79,140,255,0.16), transparent 60%),
+      radial-gradient(700px 500px at 5% 15%, rgba(49,213,200,0.10), transparent 60%),
+      var(--bg);
+  }
+
+  /* nav */
+  nav{
+    position:sticky; top:0; z-index:20;
+    padding-top:calc(16px + env(safe-area-inset-top,0px));
+    padding-bottom:16px;
+    background:rgba(8,13,23,0.82);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .navrow{display:flex;align-items:center;justify-content:space-between;gap:20px;}
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk';font-weight:700;font-size:20px;}
+  .logo .dot{width:10px;height:10px;border-radius:3px;background:linear-gradient(135deg,var(--blue),var(--cyan));}
+  .navlinks{display:flex;align-items:center;gap:30px;font-size:14.5px;color:var(--muted);}
+  .navlinks a{text-decoration:none;transition:color .15s;}
+  .navlinks a:hover{color:var(--text);}
+  .navcta{display:flex;align-items:center;gap:16px;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:10px 18px;border-radius:9px;font-size:14.5px;font-weight:600;
+    text-decoration:none;cursor:pointer;border:1px solid transparent;
+    transition:transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .btn-primary{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04101c;}
+  .btn-primary:hover{transform:translateY(-1px);}
+  .btn-ghost{border-color:var(--line);color:var(--text);}
+  .btn-ghost:hover{border-color:var(--blue);}
+  .signin{color:var(--muted);text-decoration:none;font-size:14.5px;}
+  .signin:hover{color:var(--text);}
+  @media(max-width:760px){ .navlinks{display:none;} }
+
+  /* hero */
+  .hero{padding:76px 0 90px;}
+  .hero-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:56px;align-items:center;}
+  @media(max-width:900px){ .hero-grid{grid-template-columns:1fr;} }
+  .kicker{color:var(--cyan);font-size:14px;font-weight:600;margin-bottom:18px;}
+  h1.headline{font-size:clamp(34px,4.6vw,54px);font-weight:700;line-height:1.08;margin:0 0 22px;max-width:640px;}
+  h1.headline .grad{background:linear-gradient(100deg,var(--blue),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .sub{color:var(--muted);font-size:18px;max-width:520px;margin:0 0 32px;}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;}
+
+  /* hero visual: readiness comparison card */
+  .visual-card{
+    background:linear-gradient(180deg,var(--surface),var(--surface-2));
+    border:1px solid var(--line);border-radius:20px;padding:26px;
+    box-shadow:0 30px 80px -30px rgba(0,0,0,0.6);
+  }
+  .visual-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+  .visual-head .fname{font-size:13.5px;color:var(--muted);}
+  .pill{font-size:11.5px;padding:3px 9px;border-radius:100px;background:rgba(224,168,64,0.16);color:var(--amber);}
+  .pill.ok{background:rgba(49,213,200,0.14);color:var(--cyan);}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+  .cbox{border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;}
+  .cbox .lbl{font-size:12px;color:var(--muted);margin-bottom:8px;}
+  .cbox .score{font-family:'Space Grotesk';font-size:34px;font-weight:700;}
+  .cbox.before .score{color:#e07a5f;}
+  .cbox.after .score{color:var(--cyan);}
+  .track{height:6px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:10px;}
+  .track > span{display:block;height:100%;border-radius:4px;}
+  .steps-mini{display:flex;flex-direction:column;gap:9px;}
+  .step-row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);}
+  .step-row .chk{width:16px;height:16px;border-radius:5px;background:rgba(49,213,200,0.16);color:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+
+  /* sections shared */
+  section{padding:70px 0;}
+  .eyebrow-h{font-family:'Space Grotesk';font-size:clamp(26px,3.2vw,36px);font-weight:700;margin:0 0 14px;}
+  .section-sub{color:var(--muted);font-size:16.5px;max-width:600px;margin:0 0 44px;}
+
+  /* workflow */
+  .flow{position:relative;}
+  .flow-line{position:absolute;top:24px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--line) 10%,var(--line) 90%,transparent);}
+  @media(max-width:900px){.flow-line{display:none;}}
+  .flow-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;position:relative;}
+  @media(max-width:900px){.flow-grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:540px){.flow-grid{grid-template-columns:1fr;}}
+  .flow-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 20px;}
+  .flow-num{width:26px;height:26px;border-radius:8px;background:var(--bg-2);border:1px solid var(--line);color:var(--cyan);font-family:'IBM Plex Mono';font-size:12.5px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+  .flow-card h3{font-size:16.5px;margin:0 0 8px;}
+  .flow-card p{color:var(--muted);font-size:14px;margin:0;}
+  .flow-foot{margin-top:26px;color:var(--muted);font-size:14px;display:flex;align-items:center;gap:10px;}
+  .flow-foot .badge{background:rgba(79,140,255,0.14);color:var(--blue);border-radius:7px;padding:3px 9px;font-size:12.5px;}
+
+  /* features */
+  .feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media(max-width:860px){.feat-grid{grid-template-columns:1fr;}}
+  .feat-card{border-radius:18px;padding:32px;position:relative;overflow:hidden;}
+  .feat-card.a{background:linear-gradient(160deg,rgba(79,140,255,0.13),rgba(13,21,38,0.4));border:1px solid rgba(79,140,255,0.28);}
+  .feat-card.b{background:linear-gradient(160deg,rgba(49,213,200,0.13),rgba(13,21,38,0.4));border:1px solid rgba(49,213,200,0.28);}
+  .feat-card h3{font-size:21px;margin:0 0 10px;}
+  .feat-card p{color:var(--muted);font-size:15px;margin:0 0 20px;max-width:420px;}
+  .feat-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;}
+  .feat-list li{font-size:14px;color:var(--text);padding-left:18px;position:relative;}
+  .feat-list li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:2px;background:var(--blue);}
+  .feat-card.b .feat-list li::before{background:var(--cyan);}
+
+  /* audience row */
+  .audience{display:flex;flex-wrap:wrap;gap:12px;}
+  .audience span{border:1px solid var(--line);border-radius:100px;padding:8px 16px;font-size:13.5px;color:var(--muted);}
+
+  /* cta */
+  .cta-wrap{border-radius:22px;background:linear-gradient(135deg,rgba(79,140,255,0.16),rgba(49,213,200,0.10));border:1px solid var(--line);padding:52px 44px;text-align:center;}
+  .cta-wrap h2{font-size:clamp(24px,3vw,32px);margin:0 0 12px;}
+  .cta-wrap p{color:var(--muted);margin:0 0 26px;}
+  .cta-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+
+  footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted);font-size:13.5px;}
+  .foot-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+
+  @media (prefers-reduced-motion: no-preference){
+    .cbox.after .track > span{animation:grow 1.4s ease-out .3s both;}
+  }
+  @keyframes grow{from{width:0;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap navrow">
+    <div class="logo"><span class="dot"></span>NUMPA</div>
+    <div class="navlinks">
+      <a href="#workflow">Workflow</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#docs">Documentation</a>
+    </div>
+    <div class="navcta">
+      <a class="signin" href="#signin">Sign in</a>
+      <a class="btn btn-primary" href="#signup">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">Data cleaning · ML readiness</div>
+      <h1 class="headline">Know your data.<br>Clean it.<br><span class="grad">Make it ML-ready.</span></h1>
+      <p class="sub">Upload a dataset, see exactly what's wrong with it, fix it with a pipeline you control, then measure what changed — before you ever train a model.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#signup">Upload your first dataset</a>
+        <a class="btn btn-ghost" href="#workflow">See how it works</a>
+      </div>
+    </div>
+    <div class="visual-card">
+      <div class="visual-head">
+        <span class="fname mono">customer_churn.csv</span>
+        <span class="pill">Classification</span>
+      </div>
+      <div class="compare">
+        <div class="cbox before">
+          <div class="lbl">Before cleaning</div>
+          <div class="score">42</div>
+          <div class="track"><span style="width:42%;background:#e07a5f;"></span></div>
+        </div>
+        <div class="cbox after">
+          <div class="lbl">After cleaning</div>
+          <div class="score">87</div>
+          <div class="track"><span style="width:87%;background:linear-gradient(90deg,var(--blue),var(--cyan));"></span></div>
+        </div>
+      </div>
+      <div class="steps-mini">
+        <div class="step-row"><span class="chk">✓</span> 312 missing values imputed on the training split only</div>
+        <div class="step-row"><span class="chk">✓</span> 18 duplicate records removed</div>
+        <div class="step-row"><span class="chk">✓</span> Target leakage check: no confirmed issues</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="workflow">
+  <div class="wrap">
+    <h2 class="eyebrow-h">One workflow, four stages</h2>
+    <p class="section-sub">Every dataset moves through the same sequence, so you always know where you stand and what changed.</p>
+    <div class="flow">
+      <div class="flow-line"></div>
+      <div class="flow-grid">
+        <div class="flow-card">
+          <div class="flow-num">01</div>
+          <h3>Upload &amp; inspect</h3>
+          <p>Row and column counts, types, missing values, duplicates, and a preview — the original file stays untouched.</p>
+        </div>
+        <div class="flow-card">
+          <div class="flow-num">02</div>
+          <h3>Initial readiness</h3>
+          <p>Pick your task and target, then get a scored, explainable read on what's blocking the dataset from being usable.</p>
+        </div>
+        <div class="flow-card">
+          <div class="flow-num">03</div>
+          <h3>Smart cleaning</h3>
+          <p>Build a visual pipeline from suggested or manual operations. Preview each step before you commit to it.</p>
+        </div>
+        <div class="flow-card">
+          <div class="flow-num">04</div>
+          <h3>Final comparison</h3>
+          <p>Re-run the same assessment on the cleaned data and see exactly what improved, what's left, and what's new.</p>
+        </div>
+      </div>
+    </div>
+    <div class="flow-foot"><span class="badge">PDF at every stage</span> plus the cleaned dataset, ready to export.</div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <h2 class="eyebrow-h">Two engines, working together</h2>
+    <p class="section-sub">NUMPA isn't a bundle of unrelated tools — cleaning and readiness feed each other.</p>
+    <div class="feat-grid">
+      <div class="feat-card a">
+        <h3>Smart Data Cleaning</h3>
+        <p>A visual studio for fixing what's wrong with your data — you stay in control of every operation.</p>
+        <ul class="feat-list">
+          <li>Missing values, encoding, scaling, outliers, duplicates</li>
+          <li>Reorder, preview, and undo steps before running the pipeline</li>
+          <li>Full execution history with before/after measurements</li>
+          <li>Original dataset always preserved and reproducible</li>
+        </ul>
+      </div>
+      <div class="feat-card b">
+        <h3>ML Readiness Assessment</h3>
+        <p>A task-aware score that tells you why a dataset is or isn't ready — not just that it isn't.</p>
+        <ul class="feat-list">
+          <li>Classification, regression, forecasting, and clustering support</li>
+          <li>Seven scoring dimensions with configurable weights</li>
+          <li>Target, temporal, and group leakage checks</li>
+          <li>Coverage report: what was checked, skipped, or unknown</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="audience">
+  <div class="wrap">
+    <h2 class="eyebrow-h">Built for people who clean data for a living</h2>
+    <p class="section-sub" style="margin-bottom:24px;">Freelance analysts working through client files, and the teams around them.</p>
+    <div class="audience">
+      <span>Freelance data analysts</span>
+      <span>Corporate analysts</span>
+      <span>ML engineers</span>
+      <span>Researchers</span>
+      <span>Students</span>
+    </div>
+  </div>
+</section>
+
+<section id="signup">
+  <div class="wrap">
+    <div class="cta-wrap">
+      <h2>Stop guessing what's wrong with your data.</h2>
+      <p>Upload a CSV or Excel file and get your first readiness score in minutes.</p>
+      <div class="cta-actions">
+        <a class="btn btn-primary" href="#signup">Get started free</a>
+        <a class="btn btn-ghost" href="#pricing">See pricing</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-row">
+    <div class="logo" style="font-size:16px;"><span class="dot"></span>NUMPA</div>
+    <div>© 2026 NUMPA. Data cleaning and ML readiness, in one workflow.</div>
+  </div>
+</footer>
+
+</body>
+</html>

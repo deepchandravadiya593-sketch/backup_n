@@ -1,0 +1,70 @@
+﻿apps
+packages
+reference-html
+apps\web
+apps\web\public
+apps\web\src
+apps\web\.gitignore
+apps\web\AGENTS.md
+apps\web\CLAUDE.md
+apps\web\eslint.config.mjs
+apps\web\next-env.d.ts
+apps\web\next.config.ts
+apps\web\package-lock.json
+apps\web\package.json
+apps\web\postcss.config.mjs
+apps\web\README.md
+apps\web\tsconfig.json
+apps\web\tsconfig.tsbuildinfo
+apps\web\public\prototypes
+apps\web\public\file.svg
+apps\web\public\globe.svg
+apps\web\public\next.svg
+apps\web\public\vercel.svg
+apps\web\public\window.svg
+apps\web\public\prototypes\NUMPA — API Access.html
+apps\web\public\prototypes\NUMPA — Cleaning Studio.html
+apps\web\public\prototypes\NUMPA — Custom Models.html
+apps\web\public\prototypes\NUMPA — Dashboard.html
+apps\web\public\prototypes\NUMPA — Datasets.html
+apps\web\public\prototypes\NUMPA — Documentation.html
+apps\web\public\prototypes\NUMPA — Features.html
+apps\web\public\prototypes\NUMPA — Integrations.html
+apps\web\public\prototypes\NUMPA — Landing Page.html
+apps\web\public\prototypes\NUMPA — ML Readiness.html
+apps\web\public\prototypes\NUMPA — Pricing.html
+apps\web\public\prototypes\NUMPA — Reports.html
+apps\web\public\prototypes\NUMPA — Saved Pipelines.html
+apps\web\public\prototypes\NUMPA — Settings.html
+apps\web\public\prototypes\NUMPA — Sign in.html
+apps\web\public\prototypes\NUMPA — Sign up.html
+apps\web\public\prototypes\NUMPA — Team Workspace.html
+apps\web\public\prototypes\NUMPA — White Label.html
+apps\web\src\app
+apps\web\src\components
+apps\web\src\lib
+apps\web\src\app\[slug]
+apps\web\src\app\globals.css
+apps\web\src\app\layout.tsx
+apps\web\src\app\page.tsx
+apps\web\src\app\[slug]\page.tsx
+apps\web\src\components\PrototypePage.tsx
+apps\web\src\lib\pages.ts
+reference-html\NUMPA — API Access.html
+reference-html\NUMPA — Cleaning Studio.html
+reference-html\NUMPA — Custom Models.html
+reference-html\NUMPA — Dashboard.html
+reference-html\NUMPA — Datasets.html
+reference-html\NUMPA — Documentation.html
+reference-html\NUMPA — Features.html
+reference-html\NUMPA — Integrations.html
+reference-html\NUMPA — Landing Page.html
+reference-html\NUMPA — ML Readiness.html
+reference-html\NUMPA — Pricing.html
+reference-html\NUMPA — Reports.html
+reference-html\NUMPA — Saved Pipelines.html
+reference-html\NUMPA — Settings.html
+reference-html\NUMPA — Sign in.html
+reference-html\NUMPA — Sign up.html
+reference-html\NUMPA — Team Workspace.html
+reference-html\NUMPA — White Label.html

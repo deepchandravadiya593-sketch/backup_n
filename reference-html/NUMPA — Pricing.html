@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NUMPA — Pricing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080d17;--surface:#111b30;--surface-2:#16213a;--line:#22304c;
+  --text:#e9eef7;--muted:#8fa0bd;--blue:#4f8cff;--cyan:#31d5c8;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;
+}
+*{box-sizing:inherit;}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;}
+h1,h2,h3{font-family:'Space Grotesk';letter-spacing:-0.01em;margin:0;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+a{color:inherit;}
+.wrap{max-width:1140px;margin:0 auto;padding:0 28px;}
+body{background:radial-gradient(900px 500px at 85% -10%, rgba(79,140,255,0.14), transparent 60%),radial-gradient(700px 500px at 5% 10%, rgba(49,213,200,0.09), transparent 60%),var(--bg);}
+
+nav{position:sticky;top:0;z-index:20;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:16px;background:rgba(8,13,23,0.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+.navrow{display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk';font-weight:700;font-size:20px;}
+.logo .dot{width:10px;height:10px;border-radius:3px;background:linear-gradient(135deg,var(--blue),var(--cyan));}
+.navlinks{display:flex;align-items:center;gap:30px;font-size:14.5px;color:var(--muted);}
+.navlinks a{text-decoration:none;}
+.navlinks a:hover{color:var(--text);}
+.navlinks a.on{color:var(--text);}
+.navcta{display:flex;align-items:center;gap:16px;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:9px;font-size:14.5px;font-weight:600;text-decoration:none;border:1px solid transparent;}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04101c;}
+.signin{color:var(--muted);text-decoration:none;font-size:14.5px;}
+@media(max-width:760px){.navlinks{display:none;}}
+
+.hero{padding:60px 0 20px;text-align:center;}
+.kicker{color:var(--cyan);font-size:14px;font-weight:600;margin-bottom:16px;}
+h1.headline{font-size:clamp(30px,4vw,42px);font-weight:700;margin:0 auto 14px;}
+.sub{color:var(--muted);font-size:16.5px;max-width:520px;margin:0 auto;}
+
+.toggle{display:flex;justify-content:center;gap:6px;margin:34px 0 10px;}
+.tbtn{font-size:13.5px;padding:8px 16px;border-radius:100px;border:1px solid var(--line);color:var(--muted);}
+.tbtn.on{background:rgba(79,140,255,0.16);color:var(--text);border-color:rgba(79,140,255,0.35);}
+
+section.plans{padding:26px 0 60px;}
+.plan-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+@media(max-width:980px){.plan-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:560px){.plan-grid{grid-template-columns:1fr;}}
+.plan{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px 22px;display:flex;flex-direction:column;}
+.plan.pro{background:linear-gradient(160deg,rgba(79,140,255,0.14),var(--surface));border-color:rgba(79,140,255,0.4);position:relative;}
+.plan-badge{position:absolute;top:-11px;left:22px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04101c;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;}
+.pname{font-size:14px;color:var(--muted);margin-bottom:10px;}
+.price{font-family:'Space Grotesk';font-size:32px;font-weight:700;margin-bottom:2px;}
+.price .per{font-size:13px;font-weight:500;color:var(--muted);}
+.pdesc{font-size:13px;color:var(--muted);margin-bottom:20px;min-height:34px;}
+.plist{list-style:none;margin:0 0 22px;padding:0;display:flex;flex-direction:column;gap:10px;flex:1;}
+.plist li{font-size:13.5px;padding-left:20px;position:relative;}
+.plist li::before{content:"✓";position:absolute;left:0;color:var(--cyan);font-size:12px;}
+.plan-btn{text-align:center;padding:10px;border-radius:9px;font-size:13.5px;font-weight:600;border:1px solid var(--line);}
+.plan-btn.primary{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04101c;border-color:transparent;}
+
+.compare-note{text-align:center;color:var(--muted);font-size:13px;margin-top:26px;}
+
+footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted);font-size:13.5px;}
+.foot-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap navrow">
+    <div class="logo"><span class="dot"></span>NUMPA</div>
+    <div class="navlinks"><a href="#">Features</a><a href="#" class="on">Pricing</a><a href="#">Documentation</a></div>
+    <div class="navcta"><a class="signin" href="#">Sign in</a><a class="btn btn-primary" href="#">Get started</a></div>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <div class="kicker">Pricing</div>
+  <h1 class="headline">Start free. Scale when your datasets do.</h1>
+  <p class="sub">Every plan includes the full cleaning and readiness workflow — limits scale with dataset size and usage.</p>
+</header>
+
+<div class="toggle"><span class="tbtn on">Monthly</span><span class="tbtn">Yearly — 2 months free</span></div>
+
+<section class="plans">
+  <div class="wrap">
+    <div class="plan-grid">
+      <div class="plan">
+        <div class="pname">Free</div>
+        <div class="price">₹0<span class="per">/mo</span></div>
+        <div class="pdesc">For trying NUMPA on a real dataset.</div>
+        <ul class="plist">
+          <li>3 dataset uploads / month</li>
+          <li>Datasets up to 10k rows</li>
+          <li>Full cleaning + readiness workflow</li>
+          <li>PDF export per stage</li>
+        </ul>
+        <a class="plan-btn" href="#">Get started</a>
+      </div>
+      <div class="plan">
+        <div class="pname">Starter</div>
+        <div class="price">₹499<span class="per">/mo</span></div>
+        <div class="pdesc">For individual analysts working client datasets.</div>
+        <ul class="plist">
+          <li>Everything in Free</li>
+          <li>25 dataset uploads / month</li>
+          <li>Datasets up to 250k rows</li>
+          <li>Saved pipelines</li>
+          <li>Combined workflow reports</li>
+        </ul>
+        <a class="plan-btn" href="#">Start free trial</a>
+      </div>
+      <div class="plan pro">
+        <span class="plan-badge">Most popular</span>
+        <div class="pname">Pro</div>
+        <div class="price">₹1,499<span class="per">/mo</span></div>
+        <div class="pdesc">Advanced readiness controls and API access.</div>
+        <ul class="plist">
+          <li>Everything in Starter</li>
+          <li>Unlimited dataset uploads</li>
+          <li>Custom Model Studio</li>
+          <li>REST API access</li>
+          <li>Priority processing</li>
+        </ul>
+        <a class="plan-btn primary" href="#">Start free trial</a>
+      </div>
+      <div class="plan">
+        <div class="pname">Enterprise</div>
+        <div class="price">₹4,999<span class="per">/mo</span></div>
+        <div class="pdesc">For teams and organizations.</div>
+        <ul class="plist">
+          <li>Everything in Pro</li>
+          <li>Team workspaces &amp; roles</li>
+          <li>White-label embedding</li>
+          <li>Zapier integration</li>
+          <li>Dedicated support</li>
+        </ul>
+        <a class="plan-btn" href="#">Talk to us</a>
+      </div>
+    </div>
+    <p class="compare-note">Need something custom? <a href="#" style="color:var(--blue);">Contact sales</a> for volume dataset processing or on-prem deployment.</p>
+  </div>
+</section>
+
+<footer><div class="wrap foot-row"><div class="logo" style="font-size:16px;"><span class="dot"></span>NUMPA</div><div>© 2026 NUMPA. Data cleaning and ML readiness, in one workflow.</div></div></footer>
+</body>
+</html>
